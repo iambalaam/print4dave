@@ -15,10 +15,19 @@ app.all('/', async (req, res) => {
 
     try {
         const json = JSON.parse(req.body.JSONString);
+        
+        // Validate fields
+        ['quantity', 'sku', 'mpn', 'manufacturer', 'attribs', 'category'].forEach((field) => {
+            if (!json[field]) throw new Error(`Missing field: ${field}`);
+        });
+
         const { quantity, ...data } = json;
         
         for (let i = 0; i < quantity; i++) {
-            await print(template(data))
+            const response = await print(template(data));
+            if (!response.ok) {
+                throw new Error(await response.text());
+            }
         }
 
         res.sendStatus(200);

@@ -11,8 +11,7 @@ async function print(xml) {
         `printerName=${encodeURIComponent(printerName)}`,
         `printParamsXml=`,
         `labelXml=${encodeURIComponent(xml)}`,
-        `labelSetXml=`,
-        
+        `labelSetXml=`
     ];
     
     return await fetch("https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel", {
@@ -22,7 +21,7 @@ async function print(xml) {
             "content-type": "application/x-www-form-urlencoded",
         },
         "body": bodyParms.join('&'),
-        "method": "POST",
+        "method": "POST"
     });
     
 }
