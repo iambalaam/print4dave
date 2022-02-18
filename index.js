@@ -32,8 +32,8 @@ app.all('/', async (req, res) => {
 
         res.sendStatus(200);
     } catch (e) {
-        res.status(500);
-        res.send(e);
+        console.log(e);
+        res.status(500).send(e.stack);
     }
 
 })
