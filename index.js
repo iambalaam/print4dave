@@ -15,7 +15,12 @@ app.all('/', async (req, res) => {
 
     try {
         const json = JSON.parse(req.body.JSONString);
-        await print(template(json))
+        const { quantity, ...data } = json;
+        
+        for (let i = 0; i < quantity; i++) {
+            await print(template(data))
+        }
+
         res.sendStatus(200);
     } catch (e) {
         res.status(500);
