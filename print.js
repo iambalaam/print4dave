@@ -5,6 +5,15 @@ if (typeof process !== 'undefined' && process.env) {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
+async function init() {
+    return await fetch("https://127.0.0.1:41951/DYMO/DLS/Printing/StatusConnected", {
+        "headers": {
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+        }
+    });
+}
+
 async function print(xml) {
     const printerName = 'DYMO LabelWriter 450';
     const bodyParms = [
@@ -13,6 +22,8 @@ async function print(xml) {
         `labelXml=${encodeURIComponent(xml)}`,
         `labelSetXml=`
     ];
+
+    console.log(bodyParms.join('&'));
     
     return await fetch("https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel", {
         "headers": {
@@ -26,4 +37,5 @@ async function print(xml) {
     
 }
 
-module.exports = { print };
+
+module.exports = { init, print };

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 const { template } = require('./labelTemplate');
-const { print } = require('./print');
+const { init, print } = require('./print');
 
 const PORT = 8090;
 
@@ -36,8 +36,16 @@ app.all('/', async (req, res) => {
         res.status(500).send(e.stack);
     }
 
-})
-
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Listening on http://0.0.0.0:${PORT}/`);
 });
+
+(async () => {
+    const initPrinter = await init();
+    if (initPrinter.ok) {
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Listening on http://0.0.0.0:${PORT}/`);
+        });
+    } else {
+        throw new Error('Could not initialise printer');
+    }
+})();
+
