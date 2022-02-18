@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 const { template } = require('./labelTemplate');
-const { init, print } = require('./print');
+const { init, print, getPrinters } = require('./print');
 
 const PORT = 8090;
 
@@ -16,13 +16,19 @@ app.post('/', async (req, res) => {
     try {
         // initialize printer
         const initPrinter = await init();
-        if (!initPrinter.ok) {
+        const initStatus = await initPrinter.text();
+        if (!initPrinter.ok || initStatus !== 'true') {
             throw new Error('Could not initialize printer')
         }
 
-        const json = JSON.parse(req.body.JSONString);
+        // get printers (unused, but required)
+        const getPrinter = await getPrinters();
+        if (!getPrinter.ok) {
+            throw new Error('Could not get printers')
+        }
         
         // Validate fields
+        const json = JSON.parse(req.body.JSONString);
         ['quantity', 'sku', 'mpn', 'manufacturer', 'attribs', 'category'].forEach((field) => {
             if (!json[field]) throw new Error(`Missing field: ${field}`);
         });
@@ -31,8 +37,9 @@ app.post('/', async (req, res) => {
         
         for (let i = 0; i < quantity; i++) {
             const response = await print(template(data));
-            if (!response.ok) {
-                throw new Error(await response.text());
+            const responseStatus = await response.text();
+            if (!response.ok || responseStatus !== 'true') {
+                throw new Error(`Printer responded with: ${responseStatus}`);
             }
         }
 

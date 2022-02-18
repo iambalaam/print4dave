@@ -13,6 +13,14 @@ async function init() {
         }
     });
 }
+async function getPrinters() {
+    return await fetch("https://127.0.0.1:41951/DYMO/DLS/Printing/GetPrinters", {
+        "headers": {
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9"
+        }
+    });
+}
 
 async function print(xml) {
     const printerName = 'DYMO LabelWriter 450';
@@ -22,8 +30,6 @@ async function print(xml) {
         `labelXml=${encodeURIComponent(xml)}`,
         `labelSetXml=`
     ];
-
-    console.log(bodyParms.join('&'));
     
     return await fetch("https://127.0.0.1:41951/DYMO/DLS/Printing/PrintLabel", {
         "headers": {
@@ -38,4 +44,4 @@ async function print(xml) {
 }
 
 
-module.exports = { init, print };
+module.exports = { init, getPrinters, print };
