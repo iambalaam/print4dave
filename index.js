@@ -7,11 +7,11 @@ const PORT = 8090;
 const app = express();
 app.use(express.json());
 
-app.post('/', async (_req, res) => {
-    await print(template({name: 'Steve'}));
+app.post('/', async (req, res) => {
+    await print(template(req.body));
     res.sendStatus(200);
 })
 
-app.listen(PORT, () => {
-    console.log(`Listening on ${PORT}`)
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Listening on http://0.0.0.0:${PORT}/`);
 });
