@@ -11,9 +11,15 @@ const app = express();
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.all('/', async (req, res) => {
+app.post('/', async (req, res) => {
 
     try {
+        // initialize printer
+        const initPrinter = await init();
+        if (!initPrinter.ok) {
+            throw new Error('Could not initialize printer')
+        }
+
         const json = JSON.parse(req.body.JSONString);
         
         // Validate fields
@@ -38,14 +44,7 @@ app.all('/', async (req, res) => {
 
 });
 
-(async () => {
-    const initPrinter = await init();
-    if (initPrinter.ok) {
-        app.listen(PORT, '0.0.0.0', () => {
-            console.log(`Listening on http://0.0.0.0:${PORT}/`);
-        });
-    } else {
-        throw new Error('Could not initialise printer');
-    }
-})();
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Listening on http://0.0.0.0:${PORT}/`);
+});
 
